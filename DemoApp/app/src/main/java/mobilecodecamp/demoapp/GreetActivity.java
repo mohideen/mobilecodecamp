@@ -5,40 +5,29 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 
-public class HomeActivity extends Activity {
+public class GreetActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_greet);
+        Intent intent = getIntent();
+        String name = intent.getStringExtra("name");
 
-        Button goButton = (Button) findViewById(R.id.go_button);
-
-
-        goButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditText nameText = (EditText) findViewById(R.id.name_input_text);
-                String enteredName = nameText.getText().toString();
-
-                Intent greetingIntent = new Intent(getApplicationContext(), GreetActivity.class);
-                greetingIntent.putExtra("name", enteredName);
-                startActivity(greetingIntent);
-            }
-        });
-
+        TextView greetingText = (TextView) findViewById(R.id.greeting_text);
+        greetingText.setText("Welcome " + name + "!!!");
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_home, menu);
+        getMenuInflater().inflate(R.menu.menu_greet, menu);
         return true;
     }
 
