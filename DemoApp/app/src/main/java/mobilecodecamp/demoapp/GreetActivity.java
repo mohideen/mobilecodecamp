@@ -21,6 +21,11 @@ public class GreetActivity extends Activity {
 
         TextView greetingText = (TextView) findViewById(R.id.greeting_text);
         greetingText.setText("Welcome " + name + "!!!");
+
+        Spinner colorDropdown = (Spinner) findViewById(R.id.color_dropdown);
+        ArrayAdapter<CharSequence> colorChoices = ArrayAdapter.createFromResource(this, R.array.colors, android.R.layout.simple_spinner_item);
+        colorChoices.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        colorDropdown.setAdapter(colorChoices);
     }
 
 
