@@ -2,8 +2,10 @@ package mobilecodecamp.demoapp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,18 +18,25 @@ import android.widget.TextView;
 
 public class GreetActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
+    private GreetActivity _self;
+
     private View greetView;
 
     private Spinner colorDropdown;
+
+    private SharedPreferences preferences;
 
     private int blue;
     private int green;
     private int white;
 
+    private int callCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        _self = this;
 
         //Intialize color values
         blue = getResources().getColor(android.R.color.holo_blue_light);
@@ -44,13 +53,24 @@ public class GreetActivity extends Activity implements AdapterView.OnItemSelecte
 
         colorDropdown = (Spinner) findViewById(R.id.color_dropdown);
 
-        colorDropdown.setOnItemSelectedListener(this);
-
         // Set color choices from the res/strings.xml and set display options
         ArrayAdapter<CharSequence> colorChoices = ArrayAdapter.createFromResource(this, R.array.colors, android.R.layout.simple_spinner_item);
         colorChoices.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         colorDropdown.setAdapter(colorChoices);
 
+        colorDropdown.post(new Runnable() {
+            @Override
+            public void run() {
+                colorDropdown.setOnItemSelectedListener(_self);
+            }
+        });
+
+
+
+        //Check user color prefrence and set the background color.
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        int preferedColor = preferences.getInt("preferedColor", white);
+        greetView.setBackgroundColor(preferedColor);
     }
 
 
@@ -80,15 +100,21 @@ public class GreetActivity extends Activity implements AdapterView.OnItemSelecte
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // Get the color selected by the user
         String selectedColor = colorDropdown.getSelectedItem().toString();
+        SharedPreferences.Editor editor = preferences.edit();
 
-        // Change the background color of the activity.
+        // Change the background color of the activity and save it as a user preference.
         if (selectedColor.equals("White")) {
             greetView.setBackgroundColor(white);
+            editor.putInt("preferedColor", white);
         } else if (selectedColor.equals("Green")) {
             greetView.setBackgroundColor(green);
+            editor.putInt("preferedColor", green);
         } else if (selectedColor.equals("Blue")) {
             greetView.setBackgroundColor(blue);
+            editor.putInt("preferedColor", blue);
         }
+
+        editor.commit();
     }
 
     @Override
